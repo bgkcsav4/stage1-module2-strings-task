@@ -1,25 +1,38 @@
 package com.epam.mjc;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MethodParser {
 
-    /**
-     * Parses string that represents a method signature and stores all it's members into a {@link MethodSignature} object.
-     * signatureString is a java-like method signature with following parts:
-     *      1. access modifier - optional, followed by space: ' '
-     *      2. return type - followed by space: ' '
-     *      3. method name
-     *      4. arguments - surrounded with braces: '()' and separated by commas: ','
-     * Each argument consists of argument type and argument name, separated by space: ' '.
-     * Examples:
-     *      accessModifier returnType methodName(argumentType1 argumentName1, argumentType2 argumentName2)
-     *      private void log(String value)
-     *      Vector3 distort(int x, int y, int z, float magnitude)
-     *      public DateTime getCurrentDateTime()
-     *
-     * @param signatureString source string to parse
-     * @return {@link MethodSignature} object filled with parsed values from source string
-     */
-    public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+    public MethodSignature parseFunction(String signatureString) throws UnsupportedOperationException {
+        String[] parts = signatureString.split("\\s+");
+        String accessModifier = null;
+        String returnType;
+        String methodName;
+
+
+        if (parts[0].matches("public|protected|private")) {
+            accessModifier = (parts[0]);
+            parts = Arrays.copyOfRange(parts, 1, parts.length);
+        }
+        returnType = parts[0];
+        parts = Arrays.copyOfRange(parts, 1, parts.length);
+        methodName = parts[0];
+        String argumentsString = signatureString.substring(signatureString.indexOf("(") + 1, signatureString.indexOf(")"));
+        String[] arguments = argumentsString.split(",\\s*");
+        List<MethodSignature.Argument> methodArguments = null;
+        for (String arg : arguments) {
+            String[] argParts = arg.split("\\s+");
+            MethodSignature.Argument argument = new MethodSignature.Argument(argParts[0], argParts[1]);
+            methodArguments = null;
+            methodArguments.add(argument);
+        }
+        MethodSignature methodSignature = new MethodSignature(methodName, methodArguments);
+        methodSignature.setAccessModifier(accessModifier);
+        methodSignature.setReturnType(returnType);
+
+        return methodSignature;
+
     }
 }
